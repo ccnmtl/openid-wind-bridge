@@ -32,9 +32,8 @@ function action_default()
     if (!$request) {
         return about_render();
     }
-
+    //    var_dump(getRequestInfo());
     setRequestInfo($request);
-
     if (in_array($request->mode,
                  array('checkid_immediate', 'checkid_setup'))) {
 
@@ -84,6 +83,7 @@ function action_default()
  */
 function action_logout()
 {
+    ///TODO:windlogout, too
     setLoggedInUser(null);
     setRequestInfo(null);
     return authCancel(null);
@@ -112,11 +112,12 @@ function login_checkInput($input)
 function action_login()
 {
     $method = $_SERVER['REQUEST_METHOD'];
+
+    $info = getRequestInfo();
     switch ($method) {
     case 'GET':
-        return login_render();
+	return (getLoggedInUser())? trust_render($info) : login_render();
     case 'POST':
-        $info = getRequestInfo();
         $fields = $_POST;
         if (isset($fields['cancel'])) {
             return authCancel($info);

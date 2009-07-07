@@ -28,6 +28,8 @@ function getStyle()
  */
 function getServerURL()
 {
+	global $server_url;
+	return $server_url;
     $path = $_SERVER['SCRIPT_NAME'];
     $host = $_SERVER['HTTP_HOST'];
     $port = $_SERVER['SERVER_PORT'];
@@ -48,7 +50,7 @@ function buildURL($action=null, $escaped=true)
 {
     $url = getServerURL();
     if ($action) {
-        $url .= '/' . $action;
+        $url .= $action;
     }
     return $escaped ? htmlspecialchars($url, ENT_QUOTES) : $url;
 }
@@ -89,14 +91,6 @@ function getServer()
 }
 
 /**
- * Return a hashed form of the user's password
- */
-function hashPassword($password)
-{
-    return bin2hex(Auth_OpenID_SHA1($password));
-}
-
-/**
  * Get the openid_url out of the cookie
  *
  * @return mixed $openid_url The URL that was stored in the cookie or
@@ -104,8 +98,8 @@ function hashPassword($password)
  */
 function getLoggedInUser()
 {
-    return isset($_SESSION['openid_url'])
-        ? $_SESSION['openid_url']
+    return isset($_SESSION['wind_user'])
+        ? $_SESSION['wind_user']
         : false;
 }
 
@@ -142,17 +136,22 @@ function verifyURLforUser($user, $claimed_identity_url=null)
  * @param mixed $identity_url The URL the user is logging in with.
  */
 function getUserInfo($user, $identity_url=null)
-{
-  return array(
-	       'fullname' => 'Example User',
-	       'nickname' => 'example',
-	       'dob' => '1970-01-01',
-	       'email' => 'invalid@example.com',
-	       'gender' => 'F',
-	       'postcode' => '12345',
-	       'country' => 'ES',
-	       'language' => 'eu',
+{	$ldapoutput = null; $matches = null;
+	$rv = array(
+	       'nickname' => $user,
+	       'email' => $user ."@columbia.edu",
+	       //'dob' => '1970-01-01','gender' => 'F','postcode' => '12345',
+	       //'country' => 'ES','language' => 'eu',
 	       'timezone' => 'America/New_York');
+
+	///host:ldap.columbia.edu,time limit:1 second,format: minimal,auth:simple 
+	exec("/usr/bin/ldapsearch -h ldap -l 1 -LLL -x uni=$user cn mail", $ldapoutput);
+	if (count($output) > 1
+		&& preg_match('/^cn: (.*)$/', $output[1], $matches)
+		) {
+		$rv['fullname'] = $matches[1];
+	}
+	return $rv;
 }
 
 function getRequestInfo()
@@ -171,39 +170,18 @@ function setRequestInfo($info=null)
     }
 }
 
-
-function getSreg($identity)
-{
-    // from config.php
-    global $openid_sreg;
-
-    if (!is_array($openid_sreg)) {
-        return null;
-    }
-
-    return $openid_sreg[$identity];
-
-}
-
 function idURL($identity)
 {
-    return buildURL('idpage') . "?user=" . $identity;
+    return "http://openid.ccnmtl.columbia.edu/". $identity;
 }
 
 function idFromURL($url)
 {
-    if (strpos($url, 'idpage') === false) {
-        return null;
+	$matches = null;
+    if (preg_match('/(\w+\d+)$/', $url, $matches)) {
+		return $matches[1];
     }
-
-    $parsed = parse_url($url);
-
-    $q = $parsed['query'];
-
-    $parts = array();
-    parse_str($q, $parts);
-
-    return @$parts['user'];
+	return null;
 }
 
 ?>
