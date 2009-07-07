@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+
+<XRD>
+  <Service priority="10">
+    <Type>http://specs.openid.net/auth/2.0/server</Type>
+    <URI>https://ccnmtl.lamp.columbia.edu/openid/</URI>
+    <!--https, for services like wikispaces which auths from https
+	so we avoid a browser warning of secure=>insecure
+      -->
+  </Service>
+  <!--add Shiboleth here! -->
+
+</XRD>
+
+</xrds:XRDS>
