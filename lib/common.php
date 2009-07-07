@@ -31,39 +31,27 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
 
     if ($info->idSelect()) {
         if ($idpSelect) {
-            $req_url = idURL($idpSelect);
+            $claimed_url = idURL($idpSelect);
         } else {
             $trusted = false;
         }
     } else {
-        $req_url = $info->identity;
+        $claimed_url = $info->identity;
     }
 
     $user = getLoggedInUser();
     setRequestInfo($info);
 
-    if ((!$info->idSelect()) && ($req_url != idURL($user))) {
-        return login_render(array(), $req_url, $req_url);
-    }
-
-    $trust_root = $info->trust_root;
-
     if ($trusted) {
+        if (!verifyURLforUser($user, $claimed_url)) {
+	    return login_render(array(), $claimed_url, $claimed_url);
+        }
         setRequestInfo();
         $server =& getServer();
-        $response =& $info->answer(true, null, $req_url);
+        $response =& $info->answer(true, null, $claimed_url);
 
         // Answer with some sample Simple Registration data.
-        $sreg_data = array(
-                           'fullname' => 'Example User',
-                           'nickname' => 'example',
-                           'dob' => '1970-01-01',
-                           'email' => 'invalid@example.com',
-                           'gender' => 'F',
-                           'postcode' => '12345',
-                           'country' => 'ES',
-                           'language' => 'eu',
-                           'timezone' => 'America/New_York');
+        $sreg_data = getUserInfo($user, $claimed_url);
 
         // Add the simple registration response values to the OpenID
         // response message.

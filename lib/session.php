@@ -124,6 +124,37 @@ function setLoggedInUser($identity_url=null)
     }
 }
 
+/**
+ * Returns whether a URL is valid for the user
+ *
+ * @param mixed $user The value returned by getLoggedInUser()
+ * @param mixed $claimed_identity_url The URL the user claims to own.
+ */
+function verifyURLforUser($user, $claimed_identity_url=null)
+{
+  return ($claimed_identity_url === idURL($user));
+}
+
+/**
+ * Returns registration data for the user/identity_url
+ *
+ * @param mixed $user The value returned by getLoggedInUser()
+ * @param mixed $identity_url The URL the user is logging in with.
+ */
+function getUserInfo($user, $identity_url=null)
+{
+  return array(
+	       'fullname' => 'Example User',
+	       'nickname' => 'example',
+	       'dob' => '1970-01-01',
+	       'email' => 'invalid@example.com',
+	       'gender' => 'F',
+	       'postcode' => '12345',
+	       'country' => 'ES',
+	       'language' => 'eu',
+	       'timezone' => 'America/New_York');
+}
+
 function getRequestInfo()
 {
     return isset($_SESSION['request'])

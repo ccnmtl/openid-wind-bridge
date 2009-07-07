@@ -43,7 +43,8 @@ function action_default()
             if ($request->mode == 'checkid_immediate') {
                 $response =& $request->answer(false);
             } else {
-                return trust_render($request);
+                return (getLoggedInUser()) ? trust_render($request) 
+		  : login_render();
             }
         } else if ((!$request->identity) &&
                    (!$request->idSelect())) {
