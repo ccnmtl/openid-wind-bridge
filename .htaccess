@@ -1,2 +1,8 @@
 RewriteEngine on
-RewriteRule ^(\w+\d+)$ server.php/idpage?user=$1 [PT]
+#clean USER pages
+RewriteRule ^(\w+\d+)$ server.php/idpage?user=$1 [L,PT]
+
+#clean URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ server.php/$1
+
