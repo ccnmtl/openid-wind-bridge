@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^(\w+\d+)$ server.php/idpage?user=$1 [PT]
