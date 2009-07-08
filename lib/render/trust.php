@@ -21,10 +21,25 @@ define('id_select_pat',
        '<p>You entered the server URL at the RP, %s.
        Please choose the name you wish to use.  If you enter nothing, the request will be cancelled.<br/>
        <!--input type="text" name="idSelect" /-->
-       %s
        </p>
+       <h2>Choose an Identity</h2>
+       %s
 ');
-define('radio_select_pat', '<input id="%s" type="radio" name="idSelect" value="%s" /><label for="%s">%s</label>');
+define('user_dd','<dd>Sent with your full name and Columbia email address.</dd>');
+define('anon_dd','<dd>An anonymous login that confirms your affiliation, but does not reveal your identity.
+                      This identifier is universal across many sites, so, in theory, all sites that you
+                      login to with this identity could share any information you provide to them with each other.
+                  </dd>');
+define('anon_site_dd','<dd>A site-specific anonymous login, so your login to different sites will
+			   be different.  This makes it impossible for separate sites to aggregate data
+			   you share with each of them.
+		       </dd>');
+define('radio_select_pat', '<p><dt>
+			    <input id="%s" type="radio" name="idSelect" value="%s" />
+			    <label for="%s">%s</label>
+			  </dt>
+			  %s			  	     
+			  </p>');
 
 define('no_id_pat',
 '
@@ -42,12 +57,13 @@ function trust_render($info)
 
     if ($info->idSelect()) {
         $selects = '';
-        foreach (getValidUserIDs() as $selectable_username) {
+        foreach (getValidUserIDs($current_user, $trust_root) as $selectable_username=>$details) {
 	    $selects .= sprintf(radio_select_pat, 
 				$selectable_username, 
 				$selectable_username, 
 				$selectable_username, 
-				$selectable_username
+				$selectable_username,
+				constant($details['share'].'_dd')
 				);
 	}		
         $prompt = sprintf(id_select_pat, $trust_root, $selects);

@@ -15,6 +15,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "/lamp/ccnmtl/openid/php-
  */
 $server_url = "https://ccnmtl.lamp.columbia.edu/openid/";
 
+$ccnmtl_secret = "ccnmtlissosecret";
+
 /**
  * Initialize an OpenID store
  *

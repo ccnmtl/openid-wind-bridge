@@ -104,23 +104,41 @@ function getLoggedInUser()
 }
 
 
-function getValidUserIDs($user=null) {
+function getValidUserIDs($user=null, $site=null) {
     if (!$user) $user = getLoggedInUser();
-    $rv = array($user);
+    $rv = array($user=>array('share'=>'user'));
     if (in_array("tlc.cunix.local:columbia.edu",$_SESSION['wind_groups'])) {
-	array_push($rv,friendlyAnonymousID($user,'ccnmtl'));
+	$rv[friendlyAnonymousID($user,'ccnmtl')] = array('share'=>'anon');
+	if ($site) $rv[friendlyAnonymousID($user,'ccnmtl-site',$site)] = array('share'=>'anon_site');
     }
     if (preg_match("/\.st\./", implode($_SESSION['wind_groups']))) {
-	array_push($rv,friendlyAnonymousID($user,'student'));
+	$rv[friendlyAnonymousID($user,'columbiastudent')] = array('share'=>'anon');
+	if ($site) $rv[friendlyAnonymousID($user,'columbiastudent-site',$site)] = array('share'=>'anon_site');
     }
     if (preg_match("/\.fc\./", implode($_SESSION['wind_groups']))) {
-	array_push($rv,friendlyAnonymousID($user,'faculty'));
+	$rv[friendlyAnonymousID($user,'columbiafaculty')] = array('share'=>'anon');
+	if ($site) $rv[friendlyAnonymousID($user,'columbiafaculty-site',$site)] = array('share'=>'anon_site');
     }
     return $rv;
 }
 
-function friendlyAnonymousID($user,$affil) {
-    return $affil ."-". hash_hmac("sha256","$affil-$user","ccnmtlissosecret");
+$CONSONANTS = "bcdfghjklmnpqrstvwxyz"; //21
+$VOWELS = "aeiou"; //5
+function friendlyAnonymousID($user,$affil,$site='') {
+    global $CONSONANTS, $VOWELS;
+    //affil-cvcvcDD randomness: 21**3 * 5**2 * 100 = 23152500; log16 ~= 7
+    $friendly = '';
+    $hmac = hash_hmac("sha256","$affil-$user-$site",$ccnmtl_secret);
+    $remainder = hexdec(substr($hmac,0,7)); //first 7 hex digits
+    $place = 21*5*21*5*21*10*10;
+    $friendly .= $CONSONANTS[$remainder/$place % 21]; $remainder %= $place; $place /= 21;
+    $friendly .= $VOWELS[$remainder/$place % 5]; $remainder %= $place; $place /= 5;
+    $friendly .= $CONSONANTS[$remainder/$place % 21]; $remainder %= $place; $place /= 21;
+    $friendly .= $VOWELS[$remainder/$place % 5]; $remainder %= $place; $place /= 5;
+    $friendly .= $CONSONANTS[$remainder/$place % 21]; $remainder %= $place; $place /= 21;
+    $friendly .= $remainder/$place % 10; $remainder %= $place; $place /= 10;
+    $friendly .= $remainder/$place % 10; $remainder %= $place; $place /= 10;
+    return "$affil-$friendly";
 }
 
 /**
@@ -144,9 +162,9 @@ function setLoggedInUser($identity_url=null)
  * @param mixed $user The value returned by getLoggedInUser()
  * @param mixed $claimed_identity_url The URL the user claims to own.
  */
-function verifyURLforUser($user, $claimed_identity_url=null)
+function verifyURLforUser($user, $claimed_identity_url=null, $site=null)
 {
-  return in_array($claimed_identity_url, array_map("idURL", getValidUserIDs($user)));
+    return in_array($claimed_identity_url, array_map("idURL", array_keys(getValidUserIDs($user,$site))));
 }
 
 /**
@@ -171,11 +189,12 @@ function getUserInfo($user, $identity_url=null)
 	if (count($output) > 1
 		&& preg_match('/^cn: (.*)$/', $output[1], $matches)
 		) {
+		$rv['nickname'] = $matches[1];
 		$rv['fullname'] = $matches[1];
 	}
 	return $rv;
     } else {
-	return null;
+	return array('nickname'=>idFromURL($identity_url));
     }
 }
 
