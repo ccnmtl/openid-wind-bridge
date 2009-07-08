@@ -1,0 +1,54 @@
+INTRO
+-----
+hacker: Schuyler Duveen, sky@columbia.edu
+sponsor: Columbia University Center for New Media Teaching and Learning
+
+This is an implementation of an OpenID 2.0 bridge to Wind, the Columbia University
+single-signon mechanism.
+
+Currently, it allows a Columbia affiliate to login with their UNI to website that
+supports OpenID (i.e. is a OpenID Relying Party).  Alternatively, they can login
+anonymously.
+
+It requires OpenID PHP Library 2.13, available at:
+http://www.openidenabled.com/
+and is based on the examples/server/ code in that library.
+
+That library is released under the the Apache License 2.0, and all original
+modifications here are released under the same license.
+One exception to this is the Columbia HTML template which remains unlicensed and
+copyrighted to Columbia University.
+
+QUESTIONS
+---------
+1. Currently the default 'nickname' is the Full Name.  good?
+2. What to put on identity pages
+3. Anonymized identity allowed or too confusing?
+4. Should we register/pay for a https certificate so the domain doesn't switch?
+
+
+TODO
+----
+1. consider serving openid2.provider as http or https depending on the http_referrrer
+   before doing this, confirm that it matters in some context.
+   http->https should be fine.
+
+2. nice identity pages: 
+   1. links to directory info
+   2. how to use make columbia your OpenID delegate
+
+3. better trust page text
+   1. Don't use opaque words like 'RP'
+   2. Trust this Site -> Login to Site _____
+
+4. styled home page
+   1. links to openid, and what is supported
+   2. Description of Openid
+   3. link to code?
+
+5. audit anonymized friendlyID by someone smart 
+   (i.e. student-cvcvcDD from first 7 hex-digits of hmac)
+
+6. More infrastructure if we are to allow users to permanently trust sites
+   --we can at least do this in the browser with a perma-cookie
+
