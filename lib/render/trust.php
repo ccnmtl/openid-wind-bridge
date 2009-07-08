@@ -18,10 +18,13 @@ define('normal_pat',
        '(<code>%s</code>) with <code>%s</code>?</p>');
 
 define('id_select_pat',
-       '<p>You entered the server URL at the RP.
-Please choose the name you wish to use.  If you enter nothing, the request will be cancelled.<br/>
-<input type="text" name="idSelect" /></p>
+       '<p>You entered the server URL at the RP, %s.
+       Please choose the name you wish to use.  If you enter nothing, the request will be cancelled.<br/>
+       <!--input type="text" name="idSelect" /-->
+       %s
+       </p>
 ');
+define('radio_select_pat', '<input id="%s" type="radio" name="idSelect" value="%s" /><label for="%s">%s</label>');
 
 define('no_id_pat',
 '
@@ -38,7 +41,16 @@ function trust_render($info)
     $trust_url = buildURL('trust', true);
 
     if ($info->idSelect()) {
-        $prompt = id_select_pat;
+        $selects = '';
+        foreach (getValidUserIDs() as $selectable_username) {
+	    $selects .= sprintf(radio_select_pat, 
+				$selectable_username, 
+				$selectable_username, 
+				$selectable_username, 
+				$selectable_username
+				);
+	}		
+        $prompt = sprintf(id_select_pat, $trust_root, $selects);
     } else {
         $prompt = sprintf(normal_pat, $lnk, $trust_root);
     }

@@ -103,6 +103,26 @@ function getLoggedInUser()
         : false;
 }
 
+
+function getValidUserIDs($user=null) {
+    if (!$user) $user = getLoggedInUser();
+    $rv = array($user);
+    if (in_array("tlc.cunix.local:columbia.edu",$_SESSION['wind_groups'])) {
+	array_push($rv,friendlyAnonymousID($user,'ccnmtl'));
+    }
+    if (preg_match("/\.st\./", implode($_SESSION['wind_groups']))) {
+	array_push($rv,friendlyAnonymousID($user,'student'));
+    }
+    if (preg_match("/\.fc\./", implode($_SESSION['wind_groups']))) {
+	array_push($rv,friendlyAnonymousID($user,'faculty'));
+    }
+    return $rv;
+}
+
+function friendlyAnonymousID($user,$affil) {
+    return $affil ."-". hash_hmac("sha256","$affil-$user","ccnmtlissosecret");
+}
+
 /**
  * Set the openid_url in the cookie
  *
@@ -126,7 +146,7 @@ function setLoggedInUser($identity_url=null)
  */
 function verifyURLforUser($user, $claimed_identity_url=null)
 {
-  return ($claimed_identity_url === idURL($user));
+  return in_array($claimed_identity_url, array_map("idURL", getValidUserIDs($user)));
 }
 
 /**
@@ -136,7 +156,9 @@ function verifyURLforUser($user, $claimed_identity_url=null)
  * @param mixed $identity_url The URL the user is logging in with.
  */
 function getUserInfo($user, $identity_url=null)
-{	$ldapoutput = null; $matches = null;
+{
+    if ($identity_url === idURL($user)) {
+	$ldapoutput = null; $matches = null;
 	$rv = array(
 	       'nickname' => $user,
 	       'email' => $user ."@columbia.edu",
@@ -152,6 +174,9 @@ function getUserInfo($user, $identity_url=null)
 		$rv['fullname'] = $matches[1];
 	}
 	return $rv;
+    } else {
+	return null;
+    }
 }
 
 function getRequestInfo()
@@ -178,7 +203,7 @@ function idURL($identity)
 function idFromURL($url)
 {
 	$matches = null;
-    if (preg_match('/(\w+\d+)$/', $url, $matches)) {
+    if (preg_match('/([\w-]+\d+)$/', $url, $matches)) {
 		return $matches[1];
     }
 	return null;

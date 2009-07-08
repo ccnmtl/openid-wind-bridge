@@ -86,7 +86,7 @@ function action_logout()
     ///TODO:windlogout, too
     setLoggedInUser(null);
     setRequestInfo(null);
-    return authCancel(null);
+    wind_logout(wind_config());
 }
 
 /**

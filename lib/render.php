@@ -2,19 +2,71 @@
 
 define('page_template',
 '<html>
-  <head>
+<head>
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="pragma" content="no-cache"/>
-    <title>%s</title>
-%s
-  </head>
-  <body>
-    %s
-<div id="content">
-    <h1>%s</h1>
-    %s
-</div>
-  </body>
+	<title>%s</title>
+	<style type="text/css">
+		a {text-decoration: none;}
+		a:hover {text-decoration: underline;}
+
+		.searchform {display:none;}
+	</style>
+	%s
+</head>
+<body><center>
+	<div style="text-align: left; height: 100px; width: 960px; margin-left: auto; margin-right: auto; font-family: Verdana, Arial, Helvetica, sans-serif;">
+	
+		<div style="color: #fff; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding: 0.35em 0.95em; background: #002b7f; height: 17px; position: relative">
+			<div style="float: left"><img src="http://www.columbia.edu/cu/lweb/img/assets/3817/crown.w18h14.white.gif" valign="top"/>
+			</div>
+			<div style="float: left; margin: 2 0 0 5"><a href="http://www.columbia.edu" style="color: #fff;">Columbia University in the City of New York</a></div>
+			<div style="float: right;  margin: 2 0 0 5; text-align: right">
+				<a href="http://directory.columbia.edu" style="color: #fff;">Directory</a> | <a href="http://www.columbia.edu/help/index.html" style="color: #fff;">Help</a>
+			</div>
+		</div>
+		<div>
+			<div style="float: left;"><!--<img src="http://www.columbia.edu/cu/images/cu_logo.gif" style="margin: 10px 0px" border=0 />--></div>
+			<div class="searchform" style="float: right; margin-top: 10px">
+				<form method=get action="/cgi-bin/switchaction-2008.pl">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+							<td><img src="http://www.columbia.edu/images/spacer.gif" width="1" height="3" alt="" border="0"></td>
+						</tr>
+						<tr>
+							<td valign="top"><input type="text" name="fullname" value="" id="searchbox" maxlength="2033"></td>
+							<td width="5"><img src="http://www.columbia.edu/images/spacer.gif" width="1" height="1" alt="" border="0"></td>
+							<td><input type="Image" value="search" src="http://www.columbia.edu/images/cu_btn_search.gif" width="48" height="17" alt="Search" title="Search" border="0"></td>
+						</tr>
+					</table>
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+							<td valign="top"><input name="type" type="radio" value="web" id="type" checked></td>
+							<td><label for="web"><span style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px">Web Sites</span></label></td>
+							<td width="5"><img src="http://www.columbia.edu/images/spacer.gif" width="1" height="1" alt="" border="0"></td>
+							<td valign="top"><input name="type" type="radio" id="type" value="people"></td>
+							<td><label for="people"><span style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px">People</span></label></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+		<div class="mainbody" style="clear: both; padding: 30px; font-family: Verdana; font-size: 12px; height: 500px">
+		         <div class="statusmessage">%s</div>
+			 <h1>%s</h1>
+			 <div class="maincontent">
+			   %s
+			 </div>
+		</div>
+		<div style="color: #fff; font-size: 11px; height: 17px; padding: 0.35em 0.95em; background: #002b7f">
+			<div style="margin-top: 2px; float: left"> <span style="color: #fff; font-family: Verdana, Arial, Helvetica, sans-serif;">Webmaster</div>
+			<div style="margin-top: 2px; text-align: right">116 Street &amp; Broadway, New York, NY 10027 | 212-854-1754 | &copy; <a href="http://www.columbia.edu/help/copyright.html" style="color: #fff; font-family: Verdana, Arial, Helvetica, sans-serif; ">2009 Columbia University</a></div>
+		</div>
+		<br/>
+		
+		
+	</div></center>
+</body>
 </html>');
 
 define('logged_in_pat', 'You are logged in as %s (URL: %s)');

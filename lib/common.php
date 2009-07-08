@@ -41,7 +41,6 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
 
     $user = getLoggedInUser();
     setRequestInfo($info);
-
     if ($trusted) {
         if (!verifyURLforUser($user, $claimed_url)) {
 	    return login_render(array(), $claimed_url, $claimed_url);
@@ -51,6 +50,7 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
         $response =& $info->answer(true, null, $claimed_url);
 
         // Answer with some sample Simple Registration data.
+
         $sreg_data = getUserInfo($user, $claimed_url);
 
         // Add the simple registration response values to the OpenID

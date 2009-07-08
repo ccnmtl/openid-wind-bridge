@@ -4,10 +4,10 @@ RewriteEngine on
 #clean USER pages
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{HTTP_ACCEPT} application/xrds\+xml
-RewriteRule ^(\w+\d+)$ server.php/userXrds?user=$1 [L,PT]
+RewriteRule ^([\w-]+\d+)$ server.php/userXrds?user=$1 [L,PT]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(\w+\d+)$ server.php/idpage?user=$1 [L,PT]
+RewriteRule ^([\w-]+\d+)$ server.php/idpage?user=$1 [L,PT]
 
 #generic xrds document for openid 2.0
 RewriteCond %{HTTP_ACCEPT} application/xrds\+xml

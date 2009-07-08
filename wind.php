@@ -53,8 +53,6 @@
     $conf = wind_config();
     $ticketid = false;
     if(array_key_exists($conf["logout_arg"],$_GET)) {
-      $_SESSION["wind_user"]=false;
-      $_SESSION["wind_groups"]=array();
       unset($_GET[$conf["logout_arg"]]);
       wind_logout($conf);
     }
@@ -82,6 +80,8 @@
     exit();
   }
   function wind_logout($conf) {
+    $_SESSION["wind_user"]=false;
+    $_SESSION["wind_groups"]=array();
     $r = "https://".$conf["wind_server"].$conf["wind_logout_uri"];
     header("Location: $r\n");
     exit();
@@ -105,7 +105,7 @@
       $results = preg_split("/[\s]/", $answer, 3);
       if ($results[0] == "yes") {
 	$_SESSION["wind_user"] = $results[1];
-	$_SESSION["wind_groups"] = explode($results[2],"\n");
+	$_SESSION["wind_groups"] = preg_split("/\s+/", $results[2], -1, PREG_SPLIT_NO_EMPTY);
 	if ($conf["authorize"]["valid-user"]
 	    || array_search($_SESSION["wind_user"],$conf["authorize"]["users"],true)
 	    || array_intersect($_SESSION["wind_groups"], $conf["authorize"]["groups"])
