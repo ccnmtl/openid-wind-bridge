@@ -7,12 +7,12 @@
   // This version is compatible with WINDv1.  Some minor adjustments will
   // be required to work with WINDv2.
 
-  // Sample code to include in your application
+  // Sample code to include in your application:
   // session_start();
   // include_once "wind.php";
-  // 
+  // wind_require_login();
 
-  // NOTE: you MUST run session_start() on your own beforehand.
+  // NOTE: you MUST run session_start() before running wind_require_login().
 
   function wind_config() {
     return array(
