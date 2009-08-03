@@ -179,18 +179,21 @@ function getUserInfo($user, $identity_url=null)
 	$ldapoutput = null; $matches = null;
 	$rv = array(
 	       'nickname' => $user,
-	       'email' => $user ."@columbia.edu",
+	       //'email' => $user ."@columbia.edu",
 	       //'dob' => '1970-01-01','gender' => 'F','postcode' => '12345',
 	       //'country' => 'ES','language' => 'eu',
 	       'timezone' => 'America/New_York');
 
 	///host:ldap.columbia.edu,time limit:1 second,format: minimal,auth:simple 
 	exec("/usr/bin/ldapsearch -h ldap -l 1 -LLL -x uni=$user cn mail", $ldapoutput);
-	if (count($output) > 1
-		&& preg_match('/^cn: (.*)$/', $output[1], $matches)
-		) {
+	if (count($output) > 1) {
+	    if (preg_match('/^cn: (.*)$/', $output[1], $matches)) {
 		$rv['nickname'] = $matches[1];
 		$rv['fullname'] = $matches[1];
+	    }
+	    if (preg_match('/^mail: (.*)$/', $output[2], $matches)) {
+	        $rv['email'] = $matches[1];
+	    }
 	}
 	return $rv;
     } else {

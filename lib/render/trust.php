@@ -14,21 +14,21 @@ define('trust_form_pat',
 ');
 
 define('normal_pat',
-       '<p>Do you wish to confirm your identity ' .
-       '(<code>%s</code>) with <code>%s</code>?</p>');
+       '<p>You are logging in to <b>%s</b>.</p><p>Do you wish to confirm your identity ' .
+       '(<code>%s</code>) with them?</p>');
 
 define('id_select_pat',
-       '<p>You entered the server URL at the RP, %s.
+       '<p>You are logging in to <b>%s</b>
        Please choose the name you wish to use.  If you enter nothing, the request will be cancelled.<br/>
        <!--input type="text" name="idSelect" /-->
        </p>
        <h2>Choose an Identity</h2>
        %s
 ');
-define('user_dd','<dd>Sent with your full name and Columbia email address.</dd>');
+define('user_dd','<dd>Sent with your <b>full name</b> and Columbia <b>email address</b>.</dd>');
 define('anon_dd','<dd>An anonymous login that confirms your affiliation, but does not reveal your identity.
                       This identifier is universal across many sites, so, in theory, all sites that you
-                      login to with this identity could share any information you provide to them with each other.
+                      login with this identity could collate the information you provide to each site.
                   </dd>');
 define('anon_site_dd','<dd>A site-specific anonymous login, so your login to different sites will
 			   be different.  This makes it impossible for separate sites to aggregate data
@@ -36,7 +36,7 @@ define('anon_site_dd','<dd>A site-specific anonymous login, so your login to dif
 		       </dd>');
 define('radio_select_pat', '<p><dt>
 			    <input id="%s" type="radio" name="idSelect" value="%s" />
-			    <label for="%s">%s</label>
+			    <label for="%s">%s<b>%s</b></label>
 			  </dt>
 			  %s			  	     
 			  </p>');
@@ -62,18 +62,19 @@ function trust_render($info)
 				$selectable_username, 
 				$selectable_username, 
 				$selectable_username, 
+				idURL(''),//just the prefix
 				$selectable_username,
 				constant($details['share'].'_dd')
 				);
 	}		
         $prompt = sprintf(id_select_pat, $trust_root, $selects);
     } else {
-        $prompt = sprintf(normal_pat, $lnk, $trust_root);
+        $prompt = sprintf(normal_pat, $trust_root, $lnk);
     }
 
     $form = sprintf(trust_form_pat, $trust_url, $prompt);
 
-    return page_render($form, $current_user, 'Trust This Site');
+    return page_render($form, $current_user, 'Do you trust this site?');
 }
 
 function noIdentifier_render()

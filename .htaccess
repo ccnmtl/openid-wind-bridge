@@ -1,4 +1,4 @@
-AddType application/xrds+xml .xrdf
+AddType application/xrds+xml .xrds
 
 RewriteEngine on
 #clean USER pages
@@ -11,7 +11,7 @@ RewriteRule ^([\w-]+\d+)$ server.php/idpage?user=$1 [L,PT]
 
 #generic xrds document for openid 2.0
 RewriteCond %{HTTP_ACCEPT} application/xrds\+xml
-RewriteRule ^/?$ yadis.xrdf [L] 
+RewriteRule ^/?$ yadis.xrds [L] 
 
 RewriteCond %{HTTPS} on
 RewriteCond %{REQUEST_FILENAME} !-f

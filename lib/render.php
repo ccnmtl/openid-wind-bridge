@@ -69,7 +69,7 @@ define('page_template',
 </body>
 </html>');
 
-define('logged_in_pat', 'You are logged in as %s (URL: %s)');
+define('logged_in_pat', 'You are logged in as %s');
 
 /**
  * HTTP response line contstants
@@ -117,9 +117,9 @@ function redirect_render($redir_url)
 
 function navigation_render($msg, $items)
 {
-    $what = link_render(buildURL(), 'PHP OpenID Server');
+    $what = '';//link_render(buildURL(), 'PHP OpenID Server');
     if ($msg) {
-        $what .= ' &mdash; ' . $msg;
+        $what .= $msg;
     }
     if ($items) {
         $s = '<p>' . $what . '</p><ul class="bottom">';
@@ -142,8 +142,8 @@ function page_render($body, $user, $title, $h1=null, $login=false)
     $h1 = $h1 ? $h1 : $title;
 
     if ($user) {
-        $msg = sprintf(logged_in_pat, link_render(idURL($user), $user),
-                       link_render(idURL($user)));
+        $msg = sprintf(logged_in_pat, link_render(idURL($user), $user)
+		       /*,link_render(idURL($user))*/);
         $nav = array('logout' => 'Log Out');
 
         $navigation = navigation_render($msg, $nav);
