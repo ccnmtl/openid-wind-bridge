@@ -22,6 +22,9 @@ define('id_select_pat',
        Please choose the name you wish to use.  If you enter nothing, the request will be cancelled.<br/>
        <!--input type="text" name="idSelect" /-->
        </p>
+       <style type="text/css">
+         .fullopenid {color:#999999;}
+       </style>
        <h2>Choose an Identity</h2>
        %s
 ');
@@ -36,7 +39,7 @@ define('anon_site_dd','<dd>A site-specific anonymous login, so your login to dif
 		       </dd>');
 define('radio_select_pat', '<p><dt>
 			    <input id="%s" type="radio" name="idSelect" value="%s" />
-			    <label for="%s">%s<b>%s</b></label>
+			    <label for="%s"><b>%s</b> <span class="fullopenid">(OpenID: %s)</span></label>
 			  </dt>
 			  %s			  	     
 			  </p>');
@@ -62,8 +65,8 @@ function trust_render($info)
 				$selectable_username, 
 				$selectable_username, 
 				$selectable_username, 
-				idURL(''),//just the prefix
 				$selectable_username,
+				idURL($selectable_username),//just the prefix
 				constant($details['share'].'_dd')
 				);
 	}		
