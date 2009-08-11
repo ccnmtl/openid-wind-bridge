@@ -21,7 +21,7 @@ if (function_exists('getOpenIDStore')) {
     init();
 
     /*******FAKE ***********/
-    $_SESSION['wind_user'] = 'XX-FAKEUNI-XX1';
+    $_SESSION['wind_user'] = 'abc123';
     $_SESSION['wind_groups'] = array('FAKE_CLASS.st.FAKEFAKEFAKE');
     $_POST = array("openid_ns"=>"http://specs.openid.net/auth/2.0",
 		   "openid_ns_sreg"=>"http://openid.net/extensions/sreg/1.1",

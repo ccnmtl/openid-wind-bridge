@@ -107,6 +107,9 @@ function getLoggedInUser()
 function getValidUserIDs($user=null, $site=null) {
     if (!$user) $user = getLoggedInUser();
     $rv = array($user=>array('share'=>'user'));
+
+    if ($site) $rv[friendlyAnonymousID($user,'cu',$site)] = array('share'=>'anon_site');
+    /*
     if (in_array("tlc.cunix.local:columbia.edu",$_SESSION['wind_groups'])) {
 	$rv[friendlyAnonymousID($user,'ccnmtl')] = array('share'=>'anon');
 	if ($site) $rv[friendlyAnonymousID($user,'ccnmtl-site',$site)] = array('share'=>'anon_site');
@@ -119,6 +122,7 @@ function getValidUserIDs($user=null, $site=null) {
 	$rv[friendlyAnonymousID($user,'columbiafaculty')] = array('share'=>'anon');
 	if ($site) $rv[friendlyAnonymousID($user,'columbiafaculty-site',$site)] = array('share'=>'anon_site');
     }
+    */
     return $rv;
 }
 
