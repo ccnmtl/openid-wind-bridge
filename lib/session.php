@@ -155,6 +155,7 @@ function setLoggedInUser($identity_url=null)
 {
     if (!isset($identity_url)) {
         unset($_SESSION['openid_url']);
+        unset($_SESSION['wind_user']);
     } else {
         $_SESSION['openid_url'] = $identity_url;
     }
@@ -235,4 +236,12 @@ function idFromURL($url)
 	return null;
 }
 
-?>
+function getServerConfig() {
+  global $server_config, $current_server;
+  if (!$current_server && $_SESSION['current_server']) {
+    $current_server = $_SESSION['current_server'];
+  }
+  return $server_config[$current_server];
+}
+
+

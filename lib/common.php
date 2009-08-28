@@ -15,9 +15,12 @@ function authCancel($info)
     if ($info) {
         setRequestInfo();
         $url = $info->getCancelURL();
+	//once we finish, logout:ccnmtl policy
+	setLoggedInUser(null);
     } else {
         $url = getServerURL();
     }
+    
     return redirect_render($url);
 }
 
@@ -71,7 +74,8 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
         foreach ($webresponse->headers as $k => $v) {
             $new_headers[] = $k.": ".$v;
         }
-
+	//once we finish, logout:ccnmtl policy
+	setLoggedInUser(null);
         return array($new_headers, $webresponse->body);
     } elseif ($fail_cancels) {
         return authCancel($info);

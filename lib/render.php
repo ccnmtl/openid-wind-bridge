@@ -15,7 +15,7 @@ define('page_template',
 	%s
 </head>
 <body><center>
-	<div style="text-align: left; height: 100px; width: 960px; margin-left: auto; margin-right: auto; font-family: Verdana, Arial, Helvetica, sans-serif;">
+	<div style="text-align: left; height: 100px; max-width: 800px; min-width: 400px; margin-left: auto; margin-right: auto; font-family: Verdana, Arial, Helvetica, sans-serif;">
 	
 		<div style="color: #fff; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding: 0.35em 0.95em; background: #002b7f; height: 17px; position: relative">
 			<div style="float: left"><img src="http://www.columbia.edu/cu/lweb/img/assets/3817/crown.w18h14.white.gif" valign="top"/>
@@ -137,11 +137,11 @@ function navigation_render($msg, $items)
 /**
  * Render an HTML page
  */
-function page_render($body, $user, $title, $h1=null, $login=false)
+function page_render($body, $user, $title, $h1=null, $login=false, $nologin_nav=false)
 {
     $h1 = $h1 ? $h1 : $title;
 
-    if ($user) {
+    if (!$nologin_nav && $user) {
         $msg = sprintf(logged_in_pat, link_render(idURL($user), $user)
 		       /*,link_render(idURL($user))*/);
         $nav = array('logout' => 'Log Out');
