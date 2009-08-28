@@ -14,6 +14,7 @@ define('idp_xrds_pat', '<?xml version="1.0" encoding="UTF-8"?>
       <Type>%s</Type>
       <URI>%s</URI>
     </Service>
+    <!--add Shiboleth here! -->
   </XRD>
 </xrds:XRDS>
 ');

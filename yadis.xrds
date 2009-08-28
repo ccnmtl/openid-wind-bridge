@@ -2,6 +2,7 @@
 <xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
 
 <XRD>
+  <!--this file currently does nothing. but is an example for static serving of the file -->
   <Service priority="10">
     <Type>http://specs.openid.net/auth/2.0/server</Type>
     <URI>https://ccnmtl.lamp.columbia.edu/openid/</URI>
