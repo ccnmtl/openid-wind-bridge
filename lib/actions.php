@@ -32,7 +32,7 @@ function action_default()
     if (!$request) {
         return about_render();
     }
-    //    var_dump(getRequestInfo());
+
     setRequestInfo($request);
     if (in_array($request->mode,
                  array('checkid_immediate', 'checkid_setup'))) {

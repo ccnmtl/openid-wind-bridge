@@ -48,6 +48,8 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
         if (!verifyURLforUser($user, $claimed_url, $info->trust_root)) {
 	    return login_render(array(), $claimed_url, $claimed_url);
         }
+
+	trust_save($user, idFromURL($claimed_url), $info->trust_root);
         setRequestInfo();
         $server =& getServer();
         $response =& $info->answer(true, null, $claimed_url);

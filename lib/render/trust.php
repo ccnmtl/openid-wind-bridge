@@ -2,6 +2,7 @@
 
 require_once "lib/session.php";
 require_once "lib/render.php";
+require_once "lib/common.php";
 
 define('trust_form_pat',
        '<div class="form">
@@ -15,9 +16,12 @@ define('trust_form_pat',
     <p>
     Students: By continuing, you agree to waive the confidentiality provisions of the Federal Family Educational and Privacy Rights Act of 1974 with respect to your work on <b>%s</b>, including your name and status as a student at Columbia University.
     </p><p>
-Please check with the administrator of the site you are joining to determine its copyright restrictions and rights. 
+      Please check with the administrator of the site to determine its copyright restrictions and rights. 
     </p>
     </small>
+    <p>
+      <input type="checkbox" name="remember" value="yes" /> Remember your choice on this computer. 
+    </p>
     <input type="submit" name="trust" value="Login" />
     <input type="submit" value="Cancel" />
     <script type="text/javascript">
@@ -88,6 +92,7 @@ You did not send an identifier with the request,
 and it was not an identifier selection request.
 Please return to the relying party and try again.
 ');
+
 define('forbidden_site_pat',
 '
 Sorry, but this service (%s) is not on the list of trusted sites. 
@@ -103,6 +108,11 @@ function trust_render($info)
     $trusted_site = allowedSite($info->trust_root);
 
     if ( $trusted_site ) {
+      
+      $cookie_identity = trusted_cookie($current_user, $info->trust_root);
+      if ($cookie_identity) {
+	return doAuth($info, TRUE, TRUE, $cookie_identity);
+      }
       $trust_name = (isset($trusted_site['name']) ? $trusted_site['name'] : $trust_root);
       $affiliation_info = (isset($trusted_site['description']) ? $trusted_site['description'] : '');
 
@@ -145,4 +155,25 @@ function noIdentifier_render()
     return page_render(no_id_pat, null, 'No Identifier Sent');
 }
 
-?>
+function trust_save($user, $identity, $site, $info=null) 
+{
+  if (@$_POST['remember']) {
+    $user_hmac = hash_hmac("sha256",$user,getServerConfig('secret')."extra");
+    $val_hmac = hash_hmac("sha256","$identity-$site-$user",getServerConfig('secret')."extra");
+    setcookie($user_hmac,@$_COOKIE[$user_hmac].",".$val_hmac, time()+(14*24*3600) );
+  }
+}
+
+function trusted_cookie($user, $site) 
+{
+  $user_hmac = hash_hmac("sha256",$user,getServerConfig('secret')."extra");
+  if (@$_COOKIE[$user_hmac]) {
+    foreach( getValidUserIDs($user, $site) as $identity=>$details) {
+      if (strpos($_COOKIE[$user_hmac], hash_hmac("sha256","$identity-$site-$user",getServerConfig('secret')."extra")) !==FALSE) {
+	setcookie($user_hmac, $_COOKIE[$user_hmac], time()+(14*24*3600) );//reset expiration
+	return $identity;
+      }
+    }
+  }
+  return FALSE;
+}
