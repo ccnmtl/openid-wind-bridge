@@ -28,20 +28,9 @@ function getStyle()
  */
 function getServerURL()
 {
-	global $server_url;
-	return $server_url;
-    $path = $_SERVER['SCRIPT_NAME'];
-    $host = $_SERVER['HTTP_HOST'];
-    $port = $_SERVER['SERVER_PORT'];
-    $s = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 's' : '';
-    if (($s && $port == "443") || (!$s && $port == "80")) {
-        $p = '';
-    } else {
-        $p = ':' . $port;
-    }
-
-    return "http$s://$host$p$path";
-}
+    global $server_config;
+    return $server_config[$_SERVER['HTTP_HOST']]['server'];
+ }
 
 /**
  * Build a URL to a server action
@@ -109,20 +98,6 @@ function getValidUserIDs($user=null, $site=null) {
     $rv = array($user=>array('share'=>'user'));
 
     if ($site) $rv[friendlyAnonymousID($user,'cu',$site)] = array('share'=>'anon_site');
-    /*
-    if (in_array("tlc.cunix.local:columbia.edu",$_SESSION['wind_groups'])) {
-	$rv[friendlyAnonymousID($user,'ccnmtl')] = array('share'=>'anon');
-	if ($site) $rv[friendlyAnonymousID($user,'ccnmtl-site',$site)] = array('share'=>'anon_site');
-    }
-    if (preg_match("/\.st\./", implode($_SESSION['wind_groups']))) {
-	$rv[friendlyAnonymousID($user,'columbiastudent')] = array('share'=>'anon');
-	if ($site) $rv[friendlyAnonymousID($user,'columbiastudent-site',$site)] = array('share'=>'anon_site');
-    }
-    if (preg_match("/\.fc\./", implode($_SESSION['wind_groups']))) {
-	$rv[friendlyAnonymousID($user,'columbiafaculty')] = array('share'=>'anon');
-	if ($site) $rv[friendlyAnonymousID($user,'columbiafaculty-site',$site)] = array('share'=>'anon_site');
-    }
-    */
     return $rv;
 }
 
@@ -132,7 +107,7 @@ function friendlyAnonymousID($user,$affil,$site='') {
     global $CONSONANTS, $VOWELS;
     //affil-cvcvcDD randomness: 21**3 * 5**2 * 100 = 23152500; log16 ~= 7
     $friendly = '';
-    $hmac = hash_hmac("sha256","$affil-$user-$site",$ccnmtl_secret);
+    $hmac = hash_hmac("sha256","$affil-$user-$site",getServerConfig('secret'));
     $remainder = hexdec(substr($hmac,0,7)); //first 7 hex digits
     $place = 21*5*21*5*21*10*10;
     $friendly .= $CONSONANTS[$remainder/$place % 21]; $remainder %= $place; $place /= 21;
@@ -224,7 +199,7 @@ function setRequestInfo($info=null)
 
 function idURL($identity)
 {
-    return "http://openid.ccnmtl.columbia.edu/". $identity;
+    return getServerConfig('idURLprefix'). $identity;
 }
 
 function idFromURL($url)
@@ -236,12 +211,39 @@ function idFromURL($url)
 	return null;
 }
 
-function getServerConfig() {
-  global $server_config, $current_server;
-  if (!$current_server && $_SESSION['current_server']) {
-    $current_server = $_SESSION['current_server'];
+function allowedSite($trust_root) {
+  $whitelist = getServerConfig('whitelist');
+  if ($whitelist && isset($whitelist[$trust_root])) {
+    return $whitelist[$trust_root];
+  } else {
+    return getServerConfig('allow_all');
   }
-  return $server_config[$current_server];
 }
 
+function getServerConfig($key=null) {
+    global $server_config;
+    if (!isset($server_config[$_SERVER['HTTP_HOST']])) {
+      logRequest('ERROR: HTTP_HOST Unconfigured!');
+      exit();
+    }
+    if ($key) {
+	return $server_config[$_SERVER['HTTP_HOST']][$key];
+    } else {
+	return $server_config[$_SERVER['HTTP_HOST']];
+    }
+}
 
+function logRequest($name, $info=null, $crazy=false) {
+    $f = fopen('/lamp/ccnmtl/log/openid.log','a');
+    $user = getLoggedInUser();
+    if (!$user) $user = (isset($_GET['user']) ? $_GET['user'] : 'no_user');
+
+    $stuff = array(date('c'),$_SERVER['REMOTE_ADDR'], $name, $_SERVER['HTTP_HOST'], $user);
+    if ($info) {
+	array_push($stuff,  @$_POST['idSelect'], @$info->trust_root, @$info->identity, @$info->claimed_id);
+	if ($crazy) fwrite($f, print_r($info, true));
+    }
+    fwrite($f, implode(' : ', $stuff)."\n");
+    if ($crazy) fwrite($f, print_r($crazy, true));
+    fclose($f);
+}

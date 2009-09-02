@@ -20,9 +20,9 @@ define('page_template',
 		<div style="color: #fff; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding: 0.35em 0.95em; background: #002b7f; height: 17px; position: relative">
 			<div style="float: left"><img src="http://www.columbia.edu/cu/lweb/img/assets/3817/crown.w18h14.white.gif" valign="top"/>
 			</div>
-			<div style="float: left; margin: 2 0 0 5"><a href="http://www.columbia.edu" style="color: #fff;">Columbia University in the City of New York</a></div>
+			<div style="float: left; margin: 2 0 0 5">Columbia University Libraries OpenID</div>
 			<div style="float: right;  margin: 2 0 0 5; text-align: right">
-				<a href="http://directory.columbia.edu" style="color: #fff;">Directory</a> | <a href="http://www.columbia.edu/help/index.html" style="color: #fff;">Help</a>
+				<!--a href="http://directory.columbia.edu" style="color: #fff;">Directory</a> | <a href="http://www.columbia.edu/help/index.html" style="color: #fff;">Help</a -->
 			</div>
 		</div>
 		<div>
@@ -59,8 +59,11 @@ define('page_template',
 			 </div>
 		</div>
 		<div style="color: #fff; font-size: 11px; height: 17px; padding: 0.35em 0.95em; background: #002b7f">
-			<div style="margin-top: 2px; float: left"> <span style="color: #fff; font-family: Verdana, Arial, Helvetica, sans-serif;">Webmaster</div>
-			<div style="margin-top: 2px; text-align: right">116 Street &amp; Broadway, New York, NY 10027 | 212-854-1754 | &copy; <a href="http://www.columbia.edu/help/copyright.html" style="color: #fff; font-family: Verdana, Arial, Helvetica, sans-serif; ">2009 Columbia University</a></div>
+			<div style="margin-top: 2px; float: left"><!-- something here --> </div>
+			<div style="margin-top: 2px; text-align: right">
+			  <a href="mailto:ccnmtl+openid@columbia.edu?subject=OpenID question" 
+			     style="color: #fff; font-family: Verdana, Arial, Helvetica, sans-serif;">ccnmtl+openid@columbia.edu</a>
+			</div>
 		</div>
 		<br/>
 		
@@ -163,4 +166,3 @@ function page_render($body, $user, $title, $h1=null, $login=false, $nologin_nav=
     return array($headers, $text);
 }
 
-?>

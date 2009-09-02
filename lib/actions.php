@@ -142,6 +142,7 @@ function action_login()
 function action_trust()
 {
     $info = getRequestInfo();
+    logRequest('trust',$info);
     $trusted = isset($_POST['trust']);
     return doAuth($info, $trusted, true, @$_POST['idSelect']);
 }

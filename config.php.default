@@ -13,9 +13,20 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "/lamp/ccnmtl/openid/php-
  *
  * This must be a full URL.
  */
-$server_url = "https://ccnmtl.lamp.columbia.edu/openid/";
-
-$ccnmtl_secret = "ccnmtlissosecret";
+$server_config = array(
+   'openid.ccnmtl.columbia.edu'=>array(
+      'server'=>'https://ccnmtl.lamp.columbia.edu/openid/',
+      'idURLprefix'=>'http://openid.ccnmtl.columbia.edu/',
+      'secret'=>"ccnmtlissosecret",
+      'allow_all'=>false,
+      'whitelist'=>array(
+	'https://session.wikischolars.columbia.edu'=>array(
+	   'name'=>'wikischolars.columbia.edu',
+	   'description'=>'<b>Wikischolars</b> accepts Columbia University Library OpenID logins and is a known, trusted site.'
+        )
+      )
+   )
+);
 
 /**
  * Initialize an OpenID store

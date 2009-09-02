@@ -19,14 +19,15 @@ if (function_exists('getOpenIDStore')) {
     require_once 'lib/actions.php';
 
     init();
-
     $action = getAction();
     if (!function_exists($action)) {
         $action = 'action_default';
     }
 
     $resp = $action();
-
+    if ($action != 'action_trust') {
+      logRequest($action/*,null,array($_GET,$_POST,$resp)*/);
+    }
     writeResponse($resp);
 } else {
 ?>

@@ -62,7 +62,8 @@ define('id_select_pat',
        <p>Any information sent to this site may be made public.  Please specify the identity information that you wish to share.</p>
        %s
 ');
-define('user_dd','<dd>Sent with your <b>full name</b> and Columbia <b>email address</b> as listed in the Columbia Directory.
+define('user_dd','<dd>Sent with your <b>full name</b> and Columbia <b>email address</b> as listed in the
+                  <a href="http://directory.columbia.edu">Columbia Directory</a>.
        </dd>');
 
 define('anon_dd','<dd>An anonymous login that confirms your affiliation, but does not reveal your identity.
@@ -87,20 +88,27 @@ You did not send an identifier with the request,
 and it was not an identifier selection request.
 Please return to the relying party and try again.
 ');
+define('forbidden_site_pat',
+'
+Sorry, but this service (%s) is not on the list of trusted sites. 
+The Columbia University Library OpenID system cannot authenticate you.
+');
 
 function trust_render($info)
 {
     $current_user = getLoggedInUser();
-    $lnk = link_render(idURL($current_user));
     $trust_root = htmlspecialchars($info->trust_root);
     $trust_url = buildURL('trust', true);
-    $trust_name = $trust_root;
 
-    $affiliation_info = '<b>Wikischolars</b> accepts Columbia University Library OpenID logins and is a known, trusted site.';
+    $trusted_site = allowedSite($info->trust_root);
 
-    if ($info->idSelect()) {
+    if ( $trusted_site ) {
+      $trust_name = (isset($trusted_site['name']) ? $trusted_site['name'] : $trust_root);
+      $affiliation_info = (isset($trusted_site['description']) ? $trusted_site['description'] : '');
+
+      if ($info->idSelect()) {
         $selects = '';
-        foreach (getValidUserIDs($current_user, $trust_root) as $selectable_username=>$details) {
+        foreach (getValidUserIDs($current_user, $info->trust_root) as $selectable_username=>$details) {
 	    $selects .= sprintf(radio_select_pat, 
 				$selectable_username, 
 				$selectable_username, 
@@ -111,17 +119,25 @@ function trust_render($info)
 				);
 	}		
         $prompt = sprintf(id_select_pat, $affiliation_info, $trust_name, $selects);
-    } else {
-      $prompt = sprintf(normal_pat, $affiliation_info, $trust_name, $lnk);
+      } else {
+	$prompt = sprintf(normal_pat, $affiliation_info, $trust_name, $info->identity);
+      }
+
+      $form = sprintf(trust_form_pat, $trust_url, $prompt, $trust_name);
+
+      return page_render($form, $current_user, 
+			 "CUL OpenID Authorization",
+			 "Do you trust $trust_root?",//h1
+			 true,true //login info
+			 );
+    } else {//Forbidden Site
+      return page_render(sprintf(forbidden_site_pat, $trust_root),
+			 $current_user,
+			 "CUL OpenID",
+			 "General OpenID Authentication Forbidden",
+			 true,true //login info
+			 );
     }
-
-    $form = sprintf(trust_form_pat, $trust_url, $prompt, $trust_name);
-
-    return page_render($form, $current_user, 
-		       "CUL OpenID Authorization",
-		       "Do you trust $trust_root?",//h1
-		       true,true //login info
-		       );
 }
 
 function noIdentifier_render()

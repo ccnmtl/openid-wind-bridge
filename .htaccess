@@ -12,6 +12,8 @@ RewriteRule ^([\w-]+\d+)$ server.php/idpage?user=$1 [L,PT]
 #generic xrds document for openid 2.0
 RewriteCond %{HTTP_ACCEPT} application/xrds\+xml
 RewriteRule ^/?$ server.php/idpXrds [L,PT]
+# for static serve
+# RewriteRule ^/?$ yadis.xrds [L] 
 
 RewriteCond %{HTTPS} on
 RewriteCond %{REQUEST_FILENAME} !-f

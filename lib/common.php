@@ -44,7 +44,7 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
 
     $user = getLoggedInUser();
     setRequestInfo($info);
-    if ($trusted) {
+    if ($trusted && allowedSite($info->trust_root)) {
         if (!verifyURLforUser($user, $claimed_url, $info->trust_root)) {
 	    return login_render(array(), $claimed_url, $claimed_url);
         }
