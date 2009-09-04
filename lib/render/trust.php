@@ -11,17 +11,16 @@ define('trust_form_pat',
 
   <form name="identity" method="post" action="%s">
   %s
-  <br />
+    <p>
+      <input type="checkbox" name="remember" value="yes" /> Remember your choice on this computer. 
+    </p>
   <small>
     <p>
-    Students: By continuing, you agree to waive the confidentiality provisions of the Federal Family Educational and Privacy Rights Act of 1974 with respect to your work on <b>%s</b>, including your name and status as a student at Columbia University.
+    Students: By continuing, you agree to waive the confidentiality provisions of the Federal Family Educational and Privacy Rights Act of 1974 with respect to your work on <b>%s</b>, including the release of your name and status as a student at Columbia University.
     </p><p>
       Please check with the administrator of the site to determine its copyright restrictions and rights. 
     </p>
     </small>
-    <p>
-      <input type="checkbox" name="remember" value="yes" /> Remember your choice on this computer. 
-    </p>
     <input type="submit" name="trust" value="Login" />
     <input type="submit" value="Cancel" />
     <script type="text/javascript">
@@ -97,6 +96,7 @@ define('forbidden_site_pat',
 '
 Sorry, but this service (%s) is not on the list of trusted sites. 
 The Columbia University Library OpenID system cannot authenticate you.
+<iframe style="display:none;" height="1" width="1" src="https://wind.columbia.edu/logout"></iframe>
 ');
 
 function trust_render($info)
