@@ -216,7 +216,13 @@ function allowedSite($trust_root) {
   if ($whitelist && isset($whitelist[$trust_root])) {
     return $whitelist[$trust_root];
   } else {
-    return getServerConfig('allow_all');
+    $allow = getServerConfig('allow_all');
+    if (is_bool($allow)) {
+      return $allow;
+    } elseif (is_array($allow)) {
+      return count(array_intersect($allow,$_SESSION["wind_groups"]));
+    }
+    return false;
   }
 }
 
