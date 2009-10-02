@@ -39,9 +39,14 @@
   }
   
   function wind_current_location() {
-    $s = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? "s" : "";
-    $destination = "http$s://" . $_SERVER["SERVER_NAME"] . ":"
-      . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
+    $s = '';
+    $port = ":" . $_SERVER['SERVER_PORT'];
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
+       $s = "s";
+       $port = ''; ///Safari breaks on https://HOST:443/
+    }   
+    $destination = "http$s://" . $_SERVER["SERVER_NAME"] 
+      . $port . $_SERVER["REQUEST_URI"];
     if($_SERVER["QUERY_STRING"]) {
       $destination .= "?" . $_SERVER["QUERY_STRING"];
     }
