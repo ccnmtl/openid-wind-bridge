@@ -28,7 +28,7 @@
 		 "wind_validate_uri" => "/validate",
 		 // Path to public cert used to sign $wind_server's cert
 		 "verify_ssl_certificate" => false,
-		 "ca_public_cert" => "/etc/httpd/htdocs/certs/6b8dc02d.0",
+		 "ca_public_cert" => "/lamp/ccnmtl/CUWind.crt",
 		 // These will usually be set correctly, but possibly not if you're
 		 // using a weird port or some other non-default configuration.
 		 );
@@ -102,7 +102,10 @@
     if($conf["verify_ssl_certificate"]) {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($ch, CURLOPT_CAINFO, $ca_public_cert);
+      curl_setopt($ch, CURLOPT_CAINFO, $conf['ca_public_cert']);
+    } else {
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     }
     if($ch) {
       $answer = curl_exec($ch);
